@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 Widget consumer_details(BuildContext context) {
 
   late String fname ;
   late String lname ;
-  late String dob ;
+  late String dob = " ";
 
   final formKey = GlobalKey<FormState>() ;
 
@@ -37,6 +38,7 @@ Widget consumer_details(BuildContext context) {
             decoration: InputDecoration(
               icon: Icon(Icons.person , color: Colors.black,),
               hintText: 'First name',
+              labelText: 'First name',
               hintStyle: TextStyle(
                 color: Colors.grey ,
                 fontWeight: FontWeight.bold ,
@@ -57,6 +59,7 @@ Widget consumer_details(BuildContext context) {
             decoration: InputDecoration(
                 icon: Icon(Icons.person , color : Colors.black),
                 hintText: 'Last name',
+                labelText: 'Last name',
                 hintStyle: TextStyle(
                   color: Colors.grey ,
                   fontWeight: FontWeight.bold,
@@ -74,10 +77,32 @@ Widget consumer_details(BuildContext context) {
           ) ,
           const SizedBox(height : 20) ,
           TextFormField(
+            readOnly: true,
+            onTap: () async {
+              // Below line stops keyboard from appearing
+              FocusScope.of(context).requestFocus(new FocusNode());
+
+
+              DateTime? Picked_dob = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(), //get today's date
+                  firstDate:DateTime(1950), //DateTime.now() - not to allow to choose before today.
+                  lastDate: DateTime.now()
+              );
+
+              if(Picked_dob != null) {
+                String formattedDate = DateFormat('yyyy-MM-dd').format(Picked_dob);
+                dobController.text = formattedDate;
+                dob = formattedDate ;
+              }
+
+            },
             controller: dobController,
             decoration: InputDecoration(
-                icon: Icon(Icons.password , color : Colors.black),
+                icon: Icon(Icons.date_range , color : Colors.black),
                 hintText: 'DOB',
+                labelText: 'DOB',
+              border: InputBorder.none,
                 hintStyle: TextStyle(
                   color: Colors.grey ,
                   fontWeight: FontWeight.bold,
@@ -87,10 +112,10 @@ Widget consumer_details(BuildContext context) {
                 )
             ),
             //obscureText: true,
-            onChanged: (val) => dob = val ,
+            onChanged: (dob) => dob = dob ,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (dob) => dob != null && dob != dob ? 'Password Miss Match' : null ,
-            textInputAction: TextInputAction.done,
+            validator: (dob) => dob != null && dob != dob ? '' : null ,
+            textInputAction: TextInputAction.next,
           ) ,
         ],
       ),
